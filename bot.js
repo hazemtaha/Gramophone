@@ -15,6 +15,7 @@ var actions = {
   fetchSongByMode: fetchSongByMode,
   clearContext: clearContext,
   fetchSongByArtist: fetchSongByArtist,
+  fetchSimilarSongs: fetchSimilarSongs,
 };
 
 function send(request, response) {
@@ -146,6 +147,8 @@ function fetchSongByArtist(request) {
   var entities = request.entities;
   var artist = firstEntityValue(entities, 'name');
 
+  delete context.artist;
+
     return fetch(
       'https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+artist+'&api_key=44ee108d9a89d2d1ec9b62f9330d5c53&format=json'
     )
@@ -157,6 +160,28 @@ function fetchSongByArtist(request) {
 
       return context;
     });
+}
+
+function fetchSimilarSongs(request) {
+  var context = request.context;
+  var entities = request.entities;
+  var artist = firstEntityValue(entities, 'name');
+  var track = firstEntityValue(entities, 'track');
+
+  delete context.artist;
+  delete context.track;
+
+  return fetch(
+    'https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist='+ artist +'&track='+ track +'&api_key=44ee108d9a89d2d1ec9b62f9330d5c53&format=json'
+  )
+  .then(function(response) { return response.json(); })
+  .then(function(responseJSON) {
+
+    var index = Math.round(Math.random() * responseJSON.similartracks.track.length-1);
+    context.song = responseJSON.similartracks.track[index].name + " By "+ responseJSON.similartracks.track[index].artist.name;
+
+    return context;
+  });
 }
 
 function clearContext(request) {
