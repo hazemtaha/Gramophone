@@ -16,6 +16,7 @@ var actions = {
   clearContext: clearContext,
   fetchSongByArtist: fetchSongByArtist,
   fetchSimilarSongs: fetchSimilarSongs,
+  fetchRandomSong: fetchRandomSong,
 };
 
 function send(request, response) {
@@ -94,6 +95,24 @@ function sendWeatherBubble(request) {
   return context;
 }
 
+
+
+// Example of an asynchronous function, using promises
+function fetchRandomSong(request) {
+  var context = request.context;
+    return fetch(
+      'https://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key=44ee108d9a89d2d1ec9b62f9330d5c53&format=json'
+    )
+    .then(function(response) { return response.json(); })
+    .then(function(responseJSON) {
+
+      var index = Math.round(Math.random() * responseJSON.tracks.track.length-1);
+      context.song = responseJSON.tracks.track[index].name + " By "+ responseJSON.tracks.track[index].artist.name;
+
+      return context;
+    });
+
+}
 
 
 // Example of an asynchronous function, using promises
