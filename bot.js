@@ -42,62 +42,6 @@ function send(request, response) {
   });
 }
 
-// Example of an asynchronous function, using promises
-function fetchWeather(request) {
-  var context = request.context;
-  var entities = request.entities;
-  var location = firstEntityValue(entities, 'location');
-
-  delete context.forecast;
-  delete context.missingLocation;
-  delete context.location;
-
-  if (location) {
-    context.location = location;
-    return fetch(
-      'https://api.apixu.com/v1/forecast.json?' +
-      'key=8d1bc0ace03d457ca9b164802162808' +
-      '&q=' + location
-    )
-    .then(function(response) { return response.json(); })
-    .then(function(responseJSON) {
-      context.forecast = responseJSON.current.temp_f + ' F';
-      return context;
-    });
-  } else {
-    context.missingLocation = true;
-    return context;
-  }
-}
-
-var WEATHER_IMAGE_URL = 'http://www.marciholliday.com/briefcase/115574_826201413016PM90056.png';
-
-// Example of a synchronous function, not using promises for simplicity
-function sendWeatherBubble(request) {
-  var context = request.context;
-  var fbid = request.fbid;
-  messengerSend({
-    recipient: {id: fbid},
-    message: {
-      attachment: {
-        type: 'template',
-        payload: {
-          template_type: 'generic',
-          elements: [{
-            title: 'Weather in ' + context.location,
-            image_url: WEATHER_IMAGE_URL,
-            "subtitle": context.forecast,
-          }]
-        }
-      }
-    }
-  });
-  return context;
-}
-
-
-
-// Example of an asynchronous function, using promises
 function fetchRandomSong(request) {
   var context = request.context;
     return fetch(
@@ -190,8 +134,10 @@ function fetchSimilarSongs(request) {
   delete context.artist;
   delete context.track;
 
+  var url ='https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist='+ artist +'&track='+ track +'&api_key=44ee108d9a89d2d1ec9b62f9330d5c53&format=json'
+
   return fetch(
-    'https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist='+ artist +'&track='+ track +'&api_key=44ee108d9a89d2d1ec9b62f9330d5c53&format=json'
+    url
   )
   .then(function(response) { return response.json(); })
   .then(function(responseJSON) {
