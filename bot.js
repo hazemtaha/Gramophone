@@ -8,8 +8,6 @@ var firebase = require('firebase');
 
 var actions = {
   send: send,
-  fetchWeather: fetchWeather,
-  sendWeatherBubble: sendWeatherBubble,
   detectMode: detectMode,
   fetchSong: fetchSong,
   fetchSongByMode: fetchSongByMode,
